@@ -1,8 +1,8 @@
-# Intellibot Autonomous Navigation Stack V5.0
+# Intellibot Autonomous Navigation 
 
 ![Version](https://img.shields.io/badge/version-5.0.0-blue.svg) ![Python](https://img.shields.io/badge/python-3.9%2B-yellow.svg) ![Status](https://img.shields.io/badge/status-Production-green.svg) ![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)
 
-**Intellibot V5** is a high-fidelity autonomous mobile robot simulator featuring a service-oriented architecture, advanced path planning algorithms, and a futuristic "Command Center" dashboard. It simulates a differential drive robot with realistic physics, LIDAR sensor fusion, dynamic costmap generation, and automated recovery behaviors similar to ROS (Robot Operating System) navigation stacks.
+**Intellibot** is a high-fidelity autonomous mobile robot simulator featuring a service-oriented architecture, advanced path planning algorithms, and a futuristic "Command Center" dashboard. It simulates a differential drive robot with realistic physics, LIDAR sensor fusion, dynamic costmap generation, and automated recovery behaviors similar to ROS (Robot Operating System) navigation stacks.
 
 ---
 
