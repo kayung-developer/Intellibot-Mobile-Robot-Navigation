@@ -1,155 +1,126 @@
-# Intellibot Mobile Robot Navigation
+# Intellibot Autonomous Navigation Stack V5.0
 
-This project is a comprehensive, self-contained simulator for an autonomous mobile robot. It features a FastAPI backend for the simulation logic and a CustomTkinter GUI for real-time visualization and interactive control. The entire application runs from a single Python script, with the backend and frontend communicating seamlessly via a REST API and WebSockets.
+![Version](https://img.shields.io/badge/version-5.0.0-blue.svg) ![Python](https://img.shields.io/badge/python-3.9%2B-yellow.svg) ![Status](https://img.shields.io/badge/status-Production-green.svg) ![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)
 
-![screenshot2](https://github.com/user-attachments/assets/b52c513c-72ea-45da-a115-cca2f1ad7293)
-![Screenshoot](https://github.com/user-attachments/assets/7d527847-683b-475d-aa29-654d16bbe611)
+**Intellibot V5** is a high-fidelity autonomous mobile robot simulator featuring a service-oriented architecture, advanced path planning algorithms, and a futuristic "Command Center" dashboard. It simulates a differential drive robot with realistic physics, LIDAR sensor fusion, dynamic costmap generation, and automated recovery behaviors similar to ROS (Robot Operating System) navigation stacks.
 
+---
 
+## 🌟 Key Features
 
-## Key Features
+### 🧠 Advanced Navigation Stack
+*   **Global Planner:** A* Algorithm with **Costmap Inflation** (robots prefer staying away from walls).
+*   **Path Smoothing:** B-Spline trajectory generation for organic, curved movement using `scipy`.
+*   **Local Controller:** Pure Pursuit algorithm with dynamic lookahead for smooth path following.
+*   **Dynamic Re-planning:** Real-time obstacle detection triggers immediate path recalculation.
 
-- **Robot Simulation**:
-    - Kinematics model with acceleration and speed limits.
-    - Odometry simulation with configurable, cumulative noise.
-    - Fused pose estimation (simulated).
-    - Battery model with drain based on activity (movement, sensors).
+### 🛡️ Smart Recovery Behaviors
+Unlike basic simulators, Intellibot V5 features a robust state machine for handling "stuck" scenarios:
+1.  **Stuck Detection:** Monitors velocity vs. positional change.
+2.  **Deep Recovery Maneuver:** Performs a high-speed reverse followed by a "J-Turn" to reorient the sensors.
+3.  **Map Cleansing:** Forces a global map update and re-plan after recovery.
 
-- **Environment & Path Planning**:
-    - Configurable 2D grid map with static obstacles.
-    - Dynamic obstacles that follow predefined paths.
-    - Variable terrain costs affecting pathfinding.
-    - **A* Path Planning** with path smoothing and a line-of-sight shortcut algorithm for more efficient routes.
+### 🔋 Energy Management
+*   **Battery Physics:** Simulated drain based on motor usage and idle CPU load.
+*   **Auto-Docking:** One-click autonomous navigation to the nearest charging station.
+*   **Charging Zones:** Visual detection and state switching when docked.
 
-- **Sensor Simulation**:
-    - **LIDAR**: Simulates a 2D laser scanner with configurable FOV, range, and noise.
-    - **Camera**: Simulates a forward-facing camera that "detects" dynamic obstacles within its view, complete with bounding boxes and confidence scores.
+### 🖥️ Command Center UI
+*   **Real-time Telemetry:** Sparkline graphs for Velocity and Battery levels.
+*   **Sensor Fusion Display:** Raw LIDAR point cloud visualization (Radar Scope).
+*   **Interactive Map:** Click-to-nav, Fog of War (walls), and real-time raycasting visuals.
+*   **Console Logging:** Scrolling terminal for system events and debugging.
 
-- **Autonomous Navigation & Control**:
-    - Proportional controller for path following.
-    - Dynamic path replanning if the current path is obstructed.
-    - LIDAR-based emergency stop to prevent collisions with unforeseen obstacles.
-    - Seamless switching between autonomous and manual control modes.
+---
 
-- **Interactive GUI (CustomTkinter)**:
-    - Real-time visualization of the map, obstacles, and robot.
-    - Displays multiple robot poses: ground truth, noisy odometry, and fused pose.
-    - Visualizes the planned path, LIDAR scan, camera detections, and camera FOV.
-    - **Map Editor**: Add/remove obstacles or set terrain costs with mouse clicks.
-    - **Full Robot Control**: Set navigation goals, start/stop autonomous mode, and take direct manual control with sliders or a floating joypad.
+## 🛠️ Architecture
 
-- **Backend Architecture (FastAPI)**:
-    - Runs in a background thread, handling all simulation logic.
-    - Provides REST endpoints for commands (e.g., set goal, manual control).
-    - Uses WebSockets to stream real-time state data to the GUI, ensuring a responsive and low-latency display.
+The system follows a decoupled **Client-Server** model running asynchronously within a single Python process:
 
-## Getting Started
+1.  **Backend (FastAPI & Uvicorn):**
+    *   **Environment Service:** Manages the grid, static walls, and dynamic obstacles.
+    *   **Planner Service:** Handles A* logic and B-Spline interpolation.
+    *   **Robot Entity:** Simulates physics (inertia, kinematics) and control loops.
+2.  **Communication Layer:**
+    *   **WebSockets:** Streams high-frequency telemetry (60Hz) to the UI.
+    *   **REST API:** Handles transactional commands (Set Goal, Manual Override).
+3.  **Frontend (CustomTkinter):**
+    *   Renders the visual state and captures user input.
 
-Follow these steps to get the simulator running on your local machine.
+---
+
+## 🚀 Installation
 
 ### Prerequisites
+*   Python 3.9 or higher.
 
-- [Python](https://www.python.org/downloads/) 3.8 or newer.
+### Dependencies
+Install the required packages using pip:
 
-### Installation & Running
+```bash
+pip install fastapi uvicorn numpy requests websockets customtkinter pydantic scipy
+```
 
-#### Option 1: Using the Convenience Scripts (Recommended)
+---
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <repository-url>
-    cd robot-navigation-simulator
-    ```
+## 🕹️ Usage
 
-2.  **Run the script for your OS:**
-    -   **On Linux/macOS:**
-        ```bash
-        # Make the script executable first
-        chmod +x run.sh
-        ./run.sh
-        ```
-    -   **On Windows:**
-        ```bash
-        run.bat
-        ```
-    These scripts will automatically create a virtual environment, install the dependencies, and launch the application.
-
-#### Option 2: Manual Setup
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/kayung-developer/Intellibot-Mobile-Robot-Navigation.git
-    cd robot-navigation
-    ```
-
-2.  **Create and activate a virtual environment:**
-    ```bash
-    # For Linux/macOS
-    python3 -m venv venv
-    source venv/bin/activate
-
-    # For Windows
-    python -m venv venv
-    venv\Scripts\activate
-    ```
-
-3.  **Install the required dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4.  **Run the application:**
+1.  **Start the System:**
+    Run the main script. The backend server will initialize in a background thread, followed by the GUI.
     ```bash
     python robotics.py
     ```
-    The FastAPI server will start in the background, and the GUI window will appear.
 
-## How to Use the Simulator
+2.  **Controls:**
+    *   **Set Navigation Goal:** Left-Click anywhere on the map (black area). The robot will plan a curved path and execute it.
+    *   **Auto-Dock:** Click the **"RETURN TO DOCK"** button. The robot will find the closest charger (Green Zones) and navigate there.
+    *   **Manual Override:** Use the On-Screen Arrow Pad to take control. *Note: Manual input disables autonomous mode immediately.*
 
-- **Main Map View**:
-    - **Dark Gray Rectangles**: Static obstacles.
-    - **Purple Rectangles**: Dynamic obstacles.
-    - **Blue Path**: The robot's planned route. The cyan circle is the next waypoint.
-    - **Gold Triangle**: The final goal position.
-    - **Robot Poses**:
-        - `Fused Pose (Blue)`: The robot's main, "best estimate" position. The arrow shows its orientation.
-        - `Odometry Pose (Orange)`: The position calculated from wheel encoders, which drifts over time.
-        - `True Pose (Red, Transparent)`: The actual, perfect position of the robot in the simulation.
-    - **Camera FOV**: The transparent yellow cone in front of the robot.
+3.  **Interpreting the UI:**
+    *   **Cyan Line:** The calculated B-Spline path.
+    *   **Red Rays:** LIDAR detection hits (obstacles).
+    *   **Green Zones:** Charging stations.
+    *   **Radar (Bottom Right):** Top-down raw sensor view relative to the robot.
 
-- **Setting a Goal & Navigating**:
-    1.  In the **Map Editor** panel on the right, ensure **"Set Goal"** is selected.
-    2.  **Left-click** on a valid (unobstructed) location on the map. A gold triangle will appear.
-    3.  Click the **"Start Autonomous"** button in the **Robot Control** panel. The robot will plan a path and start moving.
-    4.  Click **"Stop Autonomous"** to halt navigation.
+---
 
-- **Manual Control**:
-    - **Floating Joypad**: Use the `▲ ▼ ◄ ►` buttons on the map for quick directional control. The center `●` button is a hard stop.
-    - **Sliders**: For more precise control, use the **Linear** and **Angular** speed sliders in the **Robot Control** panel and click **"Send Manual Speeds"**.
-    - Taking manual control will automatically cancel autonomous navigation.
+## 🧠 Technical Deep Dive
 
-- **Map Editing**:
-    - **Add Obstacle**: Select this mode and left-click on the map to add a 1x1 static wall.
-    - **Remove Obstacle**: Select this mode and left-click on a wall or terrain to remove it.
-    - **Set Terrain Cost**: **Right-click** anywhere on the map to open a dialog and set a movement cost for that cell (higher cost makes the path planner avoid it).
+### The "Costmap" Concept
+In V5, the environment isn't just "0" (Free) or "1" (Occupied). We implement an **Inflation Radius**.
+*   **Walls:** Cost = Infinite.
+*   **Near Walls:** Cost = High.
+*   **Open Space:** Cost = Low.
+The A* planner uses these costs to generate paths that naturally curve around corners with a safety margin, rather than hugging walls and clipping edges.
 
-## Code Structure
+### Recovery Logic (The "J-Turn")
+If the robot's wheels are spinning but position isn't changing (`dist_moved < threshold`), the `stuck_timer` increments. If it exceeds 1.5 seconds:
+1.  **Phase 1:** Set target linear velocity to `-1.5` (Reverse).
+2.  **Phase 2:** Set angular velocity to `1.5` (Turn) while reversing.
+3.  **Phase 3:** Clear current path -> Reset Planner -> Calculate new route from new orientation.
 
-The `main.py` file is organized into several key sections and classes:
+---
 
--   **Configuration (`CONFIG`)**: A global dictionary holding all simulation parameters.
--   **Backend (Simulation & API)**:
-    -   `Robot`: Models the robot's state, physics, and battery.
-    -   `Environment`: Manages the map grid, obstacles, and terrain costs.
-    -   `PathPlanner`: Implements the A* algorithm for finding paths.
-    -   `robot_simulation_loop()`: The core async function that runs the entire simulation tick by tick.
-    -   **FastAPI Endpoints**: Functions decorated with `@app.*` that handle HTTP requests from the GUI.
--   **Frontend (GUI)**:
-    -   `RobotNavigationApp`: The main CustomTkinter application class.
-    -   `_ws_client_thread_func`: Manages the WebSocket client connection in a background thread.
-    -   `update_gui_from_state`: Parses incoming WebSocket data and updates all GUI elements.
-    -   `redraw_*` methods: Handle drawing on the Tkinter canvases.
+## 📝 Configuration
 
-## License
+You can tweak the physics and behavior in the `Config` class at the top of the file:
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+```python
+class Config:
+    MAX_LIN_VEL = 2.2       # Max Speed
+    INERTIA = 0.85          # 0.0 (Instant) to 0.99 (Heavy Slide)
+    INFLATION_RADIUS = 2.5  # Safety distance from walls
+    LIDAR_RAYS = 72         # Sensor resolution
+    # ...
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+
+**Developed for the Intellibot Project.**
+*Precision Robotics & Autonomous Systems Simulation.*
