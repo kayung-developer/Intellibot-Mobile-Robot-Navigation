@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intellibot | Autonomous Navigation System</title>
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: JetBrains Mono for the "Terminal" look -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- GLOBAL THEME: ROBOTICS & DATA --- */
+        :root {
+            --bg-color: #020405;
+            --card-bg: rgba(10, 20, 30, 0.8);
+            --accent-lidar: #00ff41; /* Hacker Green */
+            --accent-ui: #00f0ff; /* Cyber Blue */
+            --grid-color: rgba(0, 255, 65, 0.05);
+            --text-color: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            /* Sci-Fi Grid Background */
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- HEADERS --- */
+        .header-section {
+            text-align: center;
+            padding: 70px 20px 30px;
+            position: relative;
+        }
+
+        /* Scanline effect overlay */
+        .header-section::after {
+            content: "SYSTEM: ONLINE";
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-lidar);
+            font-size: 0.8rem;
+            border: 1px solid var(--accent-lidar);
+            padding: 5px 10px;
+            border-radius: 4px;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink { 0% {opacity: 1;} 50% {opacity: 0.5;} 100% {opacity: 1;} }
+
+        h1 {
+            font-size: 3.5rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            background: linear-gradient(90deg, #fff, var(--accent-ui));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .tagline {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-lidar);
+            margin-top: 10px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        p.description {
+            text-align: center;
+            color: #8899a6;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 20px auto 50px;
+            line-height: 1.6;
+            border-left: 3px solid var(--accent-ui);
+            padding-left: 20px;
+            background: linear-gradient(90deg, rgba(0,240,255,0.05), transparent);
+        }
+
+        /* --- SWIPER CONTAINER --- */
+        .swiper {
+            width: 100%;
+            padding-top: 40px;
+            padding-bottom: 80px;
+        }
+
+        .swiper-slide {
+            background-position: center;
+            background-size: cover;
+            width: 650px;
+            height: auto;
+            border-radius: 8px; /* Sharper corners for tech look */
+            /* High-Tech Glass */
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .swiper-slide { width: 90%; }
+        }
+
+        .swiper-slide img {
+            display: block;
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            filter: contrast(1.1) saturate(1.1); /* Pop the colors */
+        }
+
+        /* Tech HUD Overlay on images */
+        .swiper-slide::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(0,255,65,0.05) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Hover Captions */
+        .caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 10, 10, 0.9);
+            border-top: 1px solid var(--accent-lidar);
+            color: var(--accent-lidar);
+            font-family: 'JetBrains Mono', monospace;
+            text-align: left;
+            font-size: 0.9rem;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 2;
+        }
+
+        .caption i { margin-right: 10px; }
+
+        .swiper-slide:hover {
+            border-color: var(--accent-lidar);
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.2);
+        }
+
+        .swiper-slide:hover .caption {
+            transform: translateY(0);
+        }
+
+        /* Pagination */
+        .swiper-pagination-bullet {
+            background: #333;
+            opacity: 1;
+            width: 10px;
+            height: 10px;
+            border-radius: 0; /* Square dots for digital look */
+        }
+        .swiper-pagination-bullet-active {
+            background: var(--accent-lidar);
+            box-shadow: 0 0 10px var(--accent-lidar);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header-section">
+        <h1>Intellibot</h1>
+        <div class="tagline">Autonomous Navigation & Telemetry Simulator</div>
+        <p class="description">
+            A high-fidelity mobile robot simulator featuring a service-oriented architecture, advanced path planning (A*), LIDAR sensor fusion, and dynamic costmap generation.
+        </p>
+    </div>
+
+    <!-- GALLERY SECTION -->
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            
+            <!-- 1. The Command Deck (Main) -->
+            <div class="swiper-slide">
+                <img src="https://i.ibb.co/CpbCv6fS/deck.png" alt="Command Center">
+                <div class="caption">
+                    <i class="fas fa-satellite-dish"></i> COMMAND_CENTER // MAIN_DASHBOARD
+                </div>
+            </div>
+
+            <!-- 2. Path Planning / Navigation -->
+            <div class="swiper-slide">
+                <img src="https://i.ibb.co/JwVw0H8N/1.png" alt="Path Planning">
+                <div class="caption">
+                    <i class="fas fa-route"></i> ALGORITHM: A* PATH_PLANNING
+                </div>
+            </div>
+
+            <!-- 3. Sensor Fusion / Lidar -->
+            <div class="swiper-slide">
+                <img src="https://i.ibb.co/7Jh8ZYFC/2.png" alt="LIDAR View">
+                <div class="caption">
+                    <i class="fas fa-bullseye"></i> SENSOR_FUSION: LIDAR_POINT_CLOUD
+                </div>
+            </div>
+
+            <!-- 4. Costmap / Analysis -->
+            <div class="swiper-slide">
+                <img src="https://i.ibb.co/9H5Wpjvq/3.png" alt="Costmap">
+                <div class="caption">
+                    <i class="fas fa-layer-group"></i> DYNAMIC_COSTMAP_GENERATION
+                </div>
+            </div>
+
+            <!-- 5. Simulation Physics -->
+            <div class="swiper-slide">
+                <img src="https://i.ibb.co/R8JRt1g/4.png" alt="Physics Sim">
+                <div class="caption">
+                    <i class="fas fa-cube"></i> PHYSICS_ENGINE: DIFFERENTIAL_DRIVE
+                </div>
+            </div>
+
+            <!-- 6. Recovery Behaviors -->
+            <div class="swiper-slide">
+                <img src="https://i.ibb.co/VY3jxFgL/5.png" alt="Recovery">
+                <div class="caption">
+                    <i class="fas fa-undo"></i> SYSTEM: RECOVERY_BEHAVIORS_ACTIVE
+                </div>
+            </div>
+
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+
+    <!-- Swiper JS Script -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+        var swiper = new Swiper(".mySwiper", {
+            effect: "coverflow",
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: "auto",
+            loop: true,
+            speed: 800, // Techy smooth slide
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            coverflowEffect: {
+                rotate: 30,
+                stretch: 0,
+                depth: 300, /* Deep 3D for that holographic feel */
+                modifier: 1,
+                slideShadows: true,
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+        });
+    </script>
+</body>
+</html>
